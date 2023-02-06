@@ -25,23 +25,6 @@ void GET_traffic()
     String payload = http.getString();
     deserializeJson(doc, payload);
 
-    // *** write your code here ***
-    // set up JSON
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
   }
   else
   {
@@ -67,6 +50,15 @@ void POST_traffic(String led)
 
   Serial.println("POST " + led);
   int httpResponseCode = http.POST(json);
+
+  // Add verbose response from server
+  DynamicJsonDocument responseJson(2048);
+  String response = http.getString();
+  deserializeJson(responseJson, response);
+
+  Serial.print("status: "); Serial.println((const char*) responseJson["status"]);
+  Serial.print("message: "); Serial.println((const char*) responseJson["message"]);
+
   if (httpResponseCode == 200)
   {
     Serial.print("Done");
