@@ -25,6 +25,23 @@ void GET_traffic()
     String payload = http.getString();
     deserializeJson(doc, payload);
 
+    JsonArray array = doc["all_traffic"].as<JsonArray>();
+    for (JsonVariant val : array) {
+      // For all objects in array,
+      int pt = val["point"].as<int>();
+      if (pt == point.toInt() || pt == nearby_1 || pt == nearby_2) {
+        String ptStr = String(pt);
+        String status = val["traffic"];
+        /*
+         * String format:
+         * point [point]: [status]
+         */
+        Serial.print("point ");
+        Serial.print(ptStr);
+        Serial.print(": ");
+        Serial.println(status);
+      }
+    }
   }
   else
   {
