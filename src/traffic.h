@@ -3,11 +3,13 @@
 #include <ArduinoJson.h>
 #include <Bounce2.h>
 
+#define CODE "5dukr"
+
 const String baseUrl = "https://exceed-hardware-stamp465.koyeb.app";
 
-const String point = "กลุ่มที่";
-const int nearby_1 = "กลุ่มใกล้เคียง (กลุ่มที่ +-1)";
-const int nearby_2 = "กลุ่มใกล้เคียง (กลุ่มที่ +-1)";
+const String point = "3";
+const int nearby_1 = 2;
+const int nearby_2 = 4;
 
 void GET_traffic()
 {
@@ -59,11 +61,8 @@ void POST_traffic(String led)
   http.addHeader("Content-Type", "application/json");
 
   DynamicJsonDocument doc(2048);
-  // *** write your code here ***
-  // set up JSON
-  // .
-  // .
-  // .
+  doc["code"] = CODE;
+  doc["traffic"] = led;
   serializeJson(doc, json);
 
   Serial.println("POST " + led);
