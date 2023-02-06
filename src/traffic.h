@@ -3,11 +3,13 @@
 #include <ArduinoJson.h>
 #include <Bounce2.h>
 
+#define CODE "5dukr"
+
 const String baseUrl = "https://exceed-hardware-stamp465.koyeb.app";
 
-const String point = "กลุ่มที่";
-const int nearby_1 = "กลุ่มใกล้เคียง (กลุ่มที่ +-1)";
-const int nearby_2 = "กลุ่มใกล้เคียง (กลุ่มที่ +-1)";
+const String point = "3";
+const int nearby_1 = 2;
+const int nearby_2 = 4;
 
 void GET_traffic()
 {
@@ -23,23 +25,23 @@ void GET_traffic()
     String payload = http.getString();
     deserializeJson(doc, payload);
 
-    // *** write your code here ***
-    // set up JSON
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
-    // .
+    JsonArray array = doc["all_traffic"].as<JsonArray>();
+    for (JsonVariant val : array) {
+      // For all objects in array,
+      int pt = val["point"].as<int>();
+      if (pt == point.toInt() || pt == nearby_1 || pt == nearby_2) {
+        String ptStr = String(pt);
+        String status = val["traffic"];
+        /*
+         * String format:
+         * point [point]: [status]
+         */
+        Serial.print("point ");
+        Serial.print(ptStr);
+        Serial.print(": ");
+        Serial.println(status);
+      }
+    }
   }
   else
   {
@@ -59,15 +61,21 @@ void POST_traffic(String led)
   http.addHeader("Content-Type", "application/json");
 
   DynamicJsonDocument doc(2048);
-  // *** write your code here ***
-  // set up JSON
-  // .
-  // .
-  // .
+  doc["code"] = CODE;
+  doc["traffic"] = led;
   serializeJson(doc, json);
 
   Serial.println("POST " + led);
   int httpResponseCode = http.POST(json);
+
+  // Add verbose response from server
+  DynamicJsonDocument responseJson(2048);
+  String response = http.getString();
+  deserializeJson(responseJson, response);
+
+  Serial.print("status: "); Serial.println((const char*) responseJson["status"]);
+  Serial.print("message: "); Serial.println((const char*) responseJson["message"]);
+
   if (httpResponseCode == 200)
   {
     Serial.print("Done");
